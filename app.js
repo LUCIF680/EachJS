@@ -1,8 +1,8 @@
 const fs = require('fs').promises;
 const Handlebars = require("handlebars");
-require('dotenv').config()
 const chokidar = require('chokidar');
 const childProcess = require('child_process');
+const vars = require('./variables');
 
 
 (async () => {  
@@ -26,13 +26,7 @@ chokidar.watch('src/').on('add', async (srcPath) => {
     const buildPath = srcPath.replace('src',process.env.BUILD_FOLDER_PATH);
     const data = await fs.readFile(srcPath,'utf8');
     const template = Handlebars.compile(data)
-    fs.writeFile(
-        buildPath,
-        template({
-            "staticUrl" : process.env.STATICURL,
-            "baseUrl" : process.env.BASEURL
-        })
-        ,{ flag: 'w+' }
+    fs.writeFile(buildPath,template(vars),{ flag: 'w+' }
     ) 
     console.log(`Output is '${buildPath}'`);
 }); 
